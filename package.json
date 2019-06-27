@@ -4,7 +4,7 @@
     "description": "Serverless event planning REST API",
     "main": "build/index.js",
     "scripts": {
-        "start": "functions-framework --target=helloWorld",
+        "start": "functions-framework --target=app",
         "test": "echo \"Error: no test specified\" && exit 1",
         "check": "gts check",
         "clean": "gts clean",
@@ -12,18 +12,22 @@
         "fix": "gts fix",
         "prepare": "npm run compile",
         "pretest": "npm run compile",
-        "posttest": "npm run check"
+        "posttest": "npm run check",
+        "ts-node": "ts-node ./src/index.ts"
     },
     "author": "Ruben Laube-Pohto",
     "license": "MIT",
     "devDependencies": {
         "@google-cloud/functions-framework": "^1.1.1",
+        "@types/cors": "^2.8.5",
+        "@types/express": "^4.17.0",
         "gts": "^1.0.0",
         "ts-node": "^8.3.0",
         "tslint": "^5.18.0",
         "typescript": "~3.4.0"
     },
     "dependencies": {
+        "cors": "^2.8.5",
         "express": "^4.17.1"
     }
 }
