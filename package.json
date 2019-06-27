@@ -1,0 +1,29 @@
+{
+    "name": "event-planner",
+    "version": "0.0.1",
+    "description": "Serverless event planning REST API",
+    "main": "build/index.js",
+    "scripts": {
+        "start": "functions-framework --target=helloWorld",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "check": "gts check",
+        "clean": "gts clean",
+        "compile": "tsc -p .",
+        "fix": "gts fix",
+        "prepare": "npm run compile",
+        "pretest": "npm run compile",
+        "posttest": "npm run check"
+    },
+    "author": "Ruben Laube-Pohto",
+    "license": "MIT",
+    "devDependencies": {
+        "@google-cloud/functions-framework": "^1.1.1",
+        "gts": "^1.0.0",
+        "ts-node": "^8.3.0",
+        "tslint": "^5.18.0",
+        "typescript": "~3.4.0"
+    },
+    "dependencies": {
+        "express": "^4.17.1"
+    }
+}
