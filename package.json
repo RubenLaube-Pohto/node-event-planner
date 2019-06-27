@@ -4,7 +4,7 @@
     "description": "Serverless event planning REST API",
     "main": "build/index.js",
     "scripts": {
-        "start": "functions-framework --target=app",
+        "start": "functions-framework --target=eventPlanner",
         "test": "echo \"Error: no test specified\" && exit 1",
         "check": "gts check",
         "clean": "gts clean",
@@ -13,7 +13,7 @@
         "prepare": "npm run compile",
         "pretest": "npm run compile",
         "posttest": "npm run check",
-        "ts-node": "ts-node ./src/index.ts"
+        "deploy": "gcloud functions deploy eventPlanner --runtime nodejs10 --region europe-west1 --trigger-http"
     },
     "author": "Ruben Laube-Pohto",
     "license": "MIT",
