@@ -6,32 +6,22 @@ import {
     IsString,
 } from 'class-validator';
 
-export class Event {
+export interface Event {
     /** Event id */
-    id: number | undefined;
+    id?: number | string;
     /** Event name */
     name: string;
     /** Suggested dates for the Event */
     dates: string[];
     /** Votes on dates */
-    votes: Vote[] = [];
-
-    constructor(name: string, dates: string[]) {
-        this.name = name;
-        this.dates = Array.from(new Set(dates));
-    }
+    votes: Vote[];
 }
 
-export class Vote {
+export interface Vote {
     /** Date voted on */
     date: string;
     /** People who have voted the date */
     people: string[];
-
-    constructor(date: string, people: string[] = []) {
-        this.date = date;
-        this.people = people;
-    }
 }
 
 // #region List events
@@ -39,7 +29,7 @@ export class Vote {
 export interface ListEventsResponse {
     events: {
         /** Event id */
-        id: number;
+        id: number | string;
         /** Event name */
         name: string;
     }[];
@@ -70,7 +60,7 @@ export class CreateEventRequest {
 
 export interface CreateEventResponse {
     /** Created Event id */
-    id: number;
+    id: number | string;
 }
 
 // #endregion
@@ -110,7 +100,7 @@ export interface AddVotesResponse extends Event {}
 
 export interface EventResultsResponse {
     /** Event id */
-    id: number;
+    id: number | string;
     /** Event name */
     name: string;
     /**
