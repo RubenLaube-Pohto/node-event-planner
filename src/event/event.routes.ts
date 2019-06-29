@@ -6,6 +6,7 @@ import {
     CreateEventRequest,
     CreateEventResponse,
     Event,
+    EventResultsResponse,
     GetEventResponse,
     ListEventsResponse,
 } from '../shared/models';
@@ -73,8 +74,30 @@ routes.post('/:id/vote', async (req, res, next) => {
 /**
  * Show the results of an Event
  */
-routes.get('/:id/results', (req, res, next) => {
-    res.status(200).send({ msg: 'show result' });
+routes.get('/:id/results', async (req, res, next) => {
+    try {
+        const event = await EventHandler.get(req.params.id);
+
+        // TODO: optimize
+        // 1. get a set of all the people who voted
+        const people = new Set<string>();
+        event.votes.forEach(vote => {
+            vote.people.forEach(person => {
+                people.add(person);
+            });
+        });
+        // 2. find Votes where where all people are present
+        const suitableDates = event.votes.filter(
+            vote => vote.people.length === people.size
+        );
+
+        const response: EventResultsResponse = {
+            id: event.id!,
+            name: event.name,
+            suitableDates,
+        };
+        res.status(200).send(response);
+    } catch (err) {}
 });
 
 /**
