@@ -46,8 +46,13 @@ routes.get('/:id', async (req, res, next) => {
     try {
         const id: string = req.params.id;
         const event = await EventHandler.get(id);
+
+        if (!event) {
+            res.sendStatus(404);
+        } else {
         const response: GetEventResponse = event;
         res.status(200).send(response);
+        }
     } catch (err) {}
 });
 

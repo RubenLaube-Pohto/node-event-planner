@@ -26,10 +26,19 @@ export class FirestoreDatabase implements DatabaseConnection {
             .collection(collection)
             .doc(id)
             .get()
-            .then(snapshot => ({ id: snapshot.id, ...snapshot.data() }))
+            .then(snapshot => {
+                if (snapshot.exists) {
+                    return {
+                        id: snapshot.id,
+                        ...snapshot.data(),
+                    };
+                } else {
+                    return undefined;
+                }
+            })
             .catch(err => {
                 console.log(err);
-                return null;
+                return undefined;
             });
     }
 
