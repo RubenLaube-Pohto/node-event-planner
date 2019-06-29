@@ -10,3 +10,7 @@ export function list(): Promise<Event[]> {
 export function add(event: Event) {
     return database().add(COLLECTION, event);
 }
+
+export function get(id: string): Promise<Event> {
+    return database().get(COLLECTION, id);
+}

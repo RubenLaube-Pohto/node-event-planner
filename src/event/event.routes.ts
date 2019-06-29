@@ -1,12 +1,14 @@
-import { Router } from 'express';
-import * as EventHandler from './event.handler';
 import { validate } from 'class-validator';
+import { Router } from 'express';
 import {
+    AddVotesRequest,
     CreateEventRequest,
-    Event,
-    ListEventsResponse,
     CreateEventResponse,
+    Event,
+    GetEventResponse,
+    ListEventsResponse,
 } from '../shared/models';
+import * as EventHandler from './event.handler';
 
 const routes = Router();
 
@@ -40,8 +42,13 @@ routes.get('/:id/results', (req, res, next) => {
 /**
  * Get Event by id
  */
-routes.get('/:id', (req, res, next) => {
-    res.status(200).send({ msg: 'get event by id' });
+routes.get('/:id', async (req, res, next) => {
+    try {
+        const id: string = req.params.id;
+        const event = await EventHandler.get(id);
+        const response: GetEventResponse = event;
+        res.status(200).send(response);
+    } catch (err) {}
 });
 
 /**

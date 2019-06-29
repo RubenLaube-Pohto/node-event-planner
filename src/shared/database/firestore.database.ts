@@ -21,8 +21,16 @@ export class FirestoreDatabase implements DatabaseConnection {
             });
     }
 
-    get(collection: string, id: string | number): Promise<any> {
-        throw new Error('Method not implemented.');
+    get(collection: string, id: string): Promise<any> {
+        return this.firestore
+            .collection(collection)
+            .doc(id)
+            .get()
+            .then(snapshot => ({ id: snapshot.id, ...snapshot.data() }))
+            .catch(err => {
+                console.log(err);
+                return null;
+            });
     }
 
     add(
