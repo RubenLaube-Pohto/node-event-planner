@@ -13,8 +13,8 @@
         "prepare": "npm run compile",
         "pretest": "npm run compile",
         "posttest": "npm run check",
-        "deploy": "gcloud functions deploy eventPlanner --runtime nodejs10 --region europe-west1 --trigger-http",
-        "serve": "nodemon --watch src -e ts --exec 'npm run clean && npm run compile && npm start'"
+        "deploy": "gcloud functions deploy eventPlanner --runtime nodejs10 --region europe-west1 --trigger-http --set-env-vars NODE_ENV=production,PROJECT_ID=event-planner-245013",
+        "serve": "cross-env NODE_ENV=development KEY_FILE=service-account.json PROJECT_ID=event-planner-245013 nodemon --watch src -e ts --exec 'run-s clean compile start'"
     },
     "author": "Ruben Laube-Pohto",
     "license": "MIT",
@@ -22,13 +22,16 @@
         "@google-cloud/functions-framework": "^1.1.1",
         "@types/cors": "^2.8.5",
         "@types/express": "^4.17.0",
+        "cross-env": "^5.2.0",
         "gts": "^1.0.0",
         "nodemon": "^1.19.1",
+        "npm-run-all": "^4.1.5",
         "ts-node": "^8.3.0",
         "tslint": "^5.18.0",
         "typescript": "~3.4.0"
     },
     "dependencies": {
+        "@google-cloud/firestore": "^2.2.3",
         "class-validator": "^0.9.1",
         "cors": "^2.8.5",
         "express": "^4.17.1"
