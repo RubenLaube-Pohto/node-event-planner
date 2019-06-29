@@ -57,7 +57,11 @@ export class FirestoreDatabase implements DatabaseConnection {
         id: string,
         obj: FirebaseFirestore.DocumentData
     ): Promise<any> {
-        throw new Error('Method not implemented.');
+        return this.firestore
+            .collection(collection)
+            .doc(id)
+            .update(obj)
+            .then(() => this.get(collection, id));
     }
 
     remove(collection: string, id: string | number): Promise<true> {
