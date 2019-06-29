@@ -2,6 +2,7 @@ import { validate } from 'class-validator';
 import { Router } from 'express';
 import {
     AddVotesRequest,
+    AddVotesResponse,
     CreateEventRequest,
     CreateEventResponse,
     Event,
@@ -28,8 +29,45 @@ routes.get('/list', async (req, res, next) => {
 /**
  * Add Vote to Event
  */
-routes.post('/:id/vote', (req, res, next) => {
-    res.status(200).send({ msg: 'add vote' });
+routes.post('/:id/vote', async (req, res, next) => {
+    try {
+        const reqBody = new AddVotesRequest(req.body);
+        const errors = await validate(reqBody);
+
+        if (errors.length > 0) {
+            res.status(400).send(errors);
+        } else {
+            const id: string = req.params.id;
+
+            const event = await EventHandler.get(id);
+
+            // TODO: optimize
+            reqBody.votes!.forEach(date => {
+                // 1. check if vote date is a valid date on the event
+                if (event.dates.includes(date)) {
+                    // 2. find or create Vote that matches date
+                    let vote = event.votes.find(v => v.date === date);
+                    if (!vote) {
+                        vote = {
+                            date,
+                            people: [],
+                        };
+                        event.votes.push(vote);
+                    }
+                    // 3. add voter name if it is not yet included
+                    if (!vote.people.includes(reqBody.name!)) {
+                        vote.people.push(reqBody.name!);
+                    }
+                }
+            });
+
+            const response: AddVotesResponse = await EventHandler.update(id, {
+                votes: event.votes,
+            });
+
+            res.status(200).send(response);
+        }
+    } catch (err) {}
 });
 
 /**
@@ -50,8 +88,8 @@ routes.get('/:id', async (req, res, next) => {
         if (!event) {
             res.sendStatus(404);
         } else {
-        const response: GetEventResponse = event;
-        res.status(200).send(response);
+            const response: GetEventResponse = event;
+            res.status(200).send(response);
         }
     } catch (err) {}
 });

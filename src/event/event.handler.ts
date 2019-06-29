@@ -14,3 +14,7 @@ export function add(event: Event) {
 export function get(id: string): Promise<Event> {
     return database().get(COLLECTION, id);
 }
+
+export function update(id: string, data: Partial<Event>): Promise<Event> {
+    return database().update(COLLECTION, id, data);
+}
