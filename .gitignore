@@ -3,3 +3,6 @@ build
 
 # ignore private service account file
 service-account.json
+
+# don't need this in repo, can be generated
+openapi.json

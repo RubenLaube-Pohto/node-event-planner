@@ -16,6 +16,15 @@ const routes = Router();
 
 /**
  * List Events
+ *
+ * @swagger
+ * /event/list:
+ *   get:
+ *     tags: [event]
+ *     description: List events
+ *     responses:
+ *       '200':
+ *         $ref: '#/components/responses/ListEventsResponse'
  */
 routes.get('/list', async (req, res, next) => {
     try {
@@ -29,6 +38,19 @@ routes.get('/list', async (req, res, next) => {
 
 /**
  * Add Vote to Event
+ *
+ * @swagger
+ * /event/{id}/vote:
+ *   post:
+ *     tags: [event]
+ *     description: Add a vote to an event
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     requestBody:
+ *       $ref: '#/components/requestBodies/AddVotesRequest'
+ *     responses:
+ *       '200':
+ *         $ref: '#/components/responses/AddVotesResponse'
  */
 routes.post('/:id/vote', async (req, res, next) => {
     try {
@@ -73,6 +95,17 @@ routes.post('/:id/vote', async (req, res, next) => {
 
 /**
  * Show the results of an Event
+ *
+ * @swagger
+ * /event/{id}/results:
+ *   get:
+ *     tags: [event]
+ *     description: Get the results of an event
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       '200':
+ *         $ref: '#/components/responses/EventResultsResponse'
  */
 routes.get('/:id/results', async (req, res, next) => {
     try {
@@ -102,6 +135,17 @@ routes.get('/:id/results', async (req, res, next) => {
 
 /**
  * Get Event by id
+ *
+ * @swagger
+ * /event/{id}:
+ *   get:
+ *     tags: [event]
+ *     description: Get an event
+ *     parameters:
+ *       - $ref: '#/components/parameters/IdParam'
+ *     responses:
+ *       '200':
+ *         $ref: '#/components/responses/GetEventResponse'
  */
 routes.get('/:id', async (req, res, next) => {
     try {
@@ -119,6 +163,17 @@ routes.get('/:id', async (req, res, next) => {
 
 /**
  * Create Event
+ *
+ * @swagger
+ * /event:
+ *   post:
+ *     tags: [event]
+ *     description: Create a new event
+ *     requestBody:
+ *       $ref: '#/components/requestBodies/CreateEventRequest'
+ *     responses:
+ *       '200':
+ *         $ref: '#/components/responses/CreateEventResponse'
  */
 routes.post('/', async (req, res, next) => {
     try {
