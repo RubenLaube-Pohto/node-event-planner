@@ -1,5 +1,5 @@
-import { validate } from 'class-validator';
 import { Router } from 'express';
+import { HttpError } from '../shared/error/error';
 import {
     AddVotesRequest,
     AddVotesResponse,
@@ -33,7 +33,9 @@ routes.get('/list', async (req, res, next) => {
             events: events.map(e => ({ id: e.id!, name: e.name })),
         };
         res.status(200).send(response);
-    } catch (err) {}
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -54,43 +56,40 @@ routes.get('/list', async (req, res, next) => {
  */
 routes.post('/:id/vote', async (req, res, next) => {
     try {
-        const reqBody = new AddVotesRequest(req.body);
-        const errors = await validate(reqBody);
+        const reqBody = await EventHandler.validateRequest(
+            new AddVotesRequest(req.body)
+        );
+        const id: string = req.params.id;
+        const event = await EventHandler.get(id);
 
-        if (errors.length > 0) {
-            res.status(400).send(errors);
-        } else {
-            const id: string = req.params.id;
-
-            const event = await EventHandler.get(id);
-
-            // TODO: optimize
-            reqBody.votes!.forEach(date => {
-                // 1. check if vote date is a valid date on the event
-                if (event.dates.includes(date)) {
-                    // 2. find or create Vote that matches date
-                    let vote = event.votes.find(v => v.date === date);
-                    if (!vote) {
-                        vote = {
-                            date,
-                            people: [],
-                        };
-                        event.votes.push(vote);
-                    }
-                    // 3. add voter name if it is not yet included
-                    if (!vote.people.includes(reqBody.name!)) {
-                        vote.people.push(reqBody.name!);
-                    }
+        // TODO: optimize
+        reqBody.votes!.forEach(date => {
+            // 1. check if vote date is a valid date on the event
+            if (event.dates.includes(date)) {
+                // 2. find or create Vote that matches date
+                let vote = event.votes.find(v => v.date === date);
+                if (!vote) {
+                    vote = {
+                        date,
+                        people: [],
+                    };
+                    event.votes.push(vote);
                 }
-            });
+                // 3. add voter name if it is not yet included
+                if (!vote.people.includes(reqBody.name!)) {
+                    vote.people.push(reqBody.name!);
+                }
+            }
+        });
 
-            const response: AddVotesResponse = await EventHandler.update(id, {
-                votes: event.votes,
-            });
+        const response: AddVotesResponse = await EventHandler.update(id, {
+            votes: event.votes,
+        });
 
-            res.status(200).send(response);
-        }
-    } catch (err) {}
+        res.status(200).send(response);
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -130,7 +129,9 @@ routes.get('/:id/results', async (req, res, next) => {
             suitableDates,
         };
         res.status(200).send(response);
-    } catch (err) {}
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -151,14 +152,11 @@ routes.get('/:id', async (req, res, next) => {
     try {
         const id: string = req.params.id;
         const event = await EventHandler.get(id);
-
-        if (!event) {
-            res.sendStatus(404);
-        } else {
-            const response: GetEventResponse = event;
-            res.status(200).send(response);
-        }
-    } catch (err) {}
+        const response: GetEventResponse = event;
+        res.status(200).send(response);
+    } catch (err) {
+        next(err);
+    }
 });
 
 /**
@@ -177,23 +175,22 @@ routes.get('/:id', async (req, res, next) => {
  */
 routes.post('/', async (req, res, next) => {
     try {
-        const reqBody = new CreateEventRequest(req.body);
-        const errors = await validate(reqBody);
+        const reqBody = await EventHandler.validateRequest(
+            new CreateEventRequest(req.body)
+        );
 
-        if (errors.length > 0) {
-            res.status(400).send(errors);
-        } else {
-            const event: Event = {
-                name: reqBody.name!,
-                dates: reqBody.dates!,
-                votes: [],
-            };
-            const id = await EventHandler.add(event);
-            const response: CreateEventResponse = { id };
+        const event: Event = {
+            name: reqBody.name!,
+            dates: reqBody.dates!,
+            votes: [],
+        };
+        const id = await EventHandler.add(event);
+        const response: CreateEventResponse = { id };
 
-            res.status(200).send(response);
-        }
-    } catch (err) {}
+        res.status(200).send(response);
+    } catch (err) {
+        next(err);
+    }
 });
 
 export { routes };
